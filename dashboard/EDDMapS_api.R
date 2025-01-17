@@ -3,12 +3,9 @@
 library(tidyverse)
 library(readxl)
 library(jsonlite)
-#library(sf)
-#library(httr)
+library(sf)
 
-setwd("C:/Users/dburruss/Documents/GitHub/NMDA")
-
-# download all of the iNaturalist data for listed species
+# download all of the EDDMapS data for listed species
 
 #grab a list of NM noxious weeds
 list <- read_xlsx("data/tables/Nox_weed_list.xlsx") %>%
@@ -28,10 +25,8 @@ for (i in list$EDDMapS_subnum) {
     
     # Base URL for the API, with state, country, subjectid, and page # parameter
     # state and country require numeric value. NM = 35 and USA=926
-    #base_url <- paste0("https://api.bugwoodcloud.org/v2/occurrence?state=35&subjectid=",i,"&paging=true") #does not include country parameter
-    base_url <- paste0("https://api.bugwoodcloud.org/v2/occurrence?state=35&country=926&subjectid=",i,"&paging=true") #! this is not filtering by country
+    base_url <- paste0("https://api.bugwoodcloud.org/v2/occurrence?state=35&country=926&subjectid=",i,"&paging=true")
 
-    
     json_data <- fromJSON(base_url)
     
     # get total observations and pages needed for each species i
@@ -79,8 +74,21 @@ for (i in list$EDDMapS_subnum) {
   
 }
 
+##### some cleaning required for EDDMapS data
 
-#####prepare the data for creating shapefile and plotting for visual check
+#remove the JSON structure from var names
+colnames(nox_emd) <- gsub("^data\\.", "", colnames(nox_emd))
+
+# Identify the column of class 'list'
+column_classes <- sapply(nox_emd, class)
+list_columns <- names(column_classes[column_classes == "list"])
+
+#remove NA data !!!!!!!!!!!!!!!!!!!NEED TO EMAIL EDDMAPS THAT THIS IS OCCURRING. PROBABLE ISSUE WITH THEIR API
+nox_emd <- nox_emd %>%
+  filter(!is.na(coordinates)) %>%
+  select(-nextpage, -previouspage, -page, -totalrows) %>%
+  select(-all_of(list_columns))
+  
 
 #####plot data
 # Download New Mexico state boundaries
@@ -90,7 +98,7 @@ states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% #grabs a m
 counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
 
 #extract x and y values for plots
-coords <- strsplit(nox_emd$data.coordinates, ",\\s*")
+coords <- strsplit(nox_emd$coordinates, ",\\s*")
 nox_emd$latitude <- as.numeric(sapply(coords, `[`, 1))
 nox_emd$longitude <- as.numeric(sapply(coords, `[`, 2))
 
@@ -102,23 +110,11 @@ plot(nox_emd$longitude, nox_emd$latitude,
      ylab="Latitude", 
      main="Noxious Weeds in New Mexico",
      xlim=c(-109.05, -103),
-     ylim=c(31.3, 37.0))
-
-plot(as.numeric(sapply(strsplit(nox_emd$data.coordinates, ",\\s*"), `[`, 2)), 
-     as.numeric(sapply(strsplit(nox_emd$data.coordinates, ",\\s*"), `[`, 1)), 
-     col=as.factor(nox_emd$scientificname), 
-     pch=20, cex=1, 
-     xlab="Longitude", 
-     ylab="Latitude", 
-     main="Noxious Weeds in New Mexico")
-
-# ,
-#      xlim=c(-109.05, -103),
-#      ylim=c(31.3, 37.0))
+     ylim=c(31.4, 37.0))
 
 plot(counties, col=NA,
      border="gray50",
-     lwd=0.5,
+     lwd=0.25,
      add=TRUE)
 
 plot(states, 
@@ -127,11 +123,39 @@ plot(states,
      lwd=5, 
      add=TRUE)
 
-names(nox_emd)
+#####separate data by geotype (point, line, polygon)
 
-#convert to a shapefile
-nox_emd_sf <- st_as_sf(nox_emd, coords = c("longitude", "latitude"), crs = 4326)
+#points data
+nox_emd %>%
+  filter(geogtype=="Point") %>%
+  write.csv(paste0("data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv"))
+  
+NEED TO SORT OUT POLYGON DATA ISSUES
 
-#write shapefile out
-st_write(nox_emd_sf, "data/shapefiles/Processed_NW_data/EDDMapS_NM_NW.shp")
+#Polygons
+test <- nox_emd %>%
+  filter(geogtype=="MultiPolygons") %>%
+  write.csv(paste0("data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv"))
+
+test$geogwkt[1]
+
+unique(nox_emd$geogtype)
+
+
+
+#MultiPolygons
+
+nox_emd_na <- nox_emd %>%
+  filter(is.na(geogtype))
+
+
+
+#write out raw data
+write.csv(nox_emd,paste0("data/tables/EDDMapS_raw/nox_emd_data_",Sys.Date(),".csv"))
+
+# #convert to a shapefile
+# nox_emd_sf <- st_as_sf(nox_emd, coords = c("longitude", "latitude"), crs = 4326)
+
+# #write shapefile out
+# st_write(nox_emd_sf, "data/shapefiles/Processed_NW_data/EDDMapS_NM_NW.shp")
 
