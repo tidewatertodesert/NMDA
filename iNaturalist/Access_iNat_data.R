@@ -40,16 +40,17 @@ for (i in list$sp_name) {
 }
 
 
+#save raw data
+write.csv(nox_obs, paste0("iNaturalist/data/inat_raw_data_",Sys.Date(),".csv"))
 
-
-
+#convert data to shapefile, reduce fields, and save
 inat_obs_sf <- nox_obs %>% #pipes this data through the next 3 lines of code
   select(longitude, latitude, datetime, common_name, scientific_name, quality_grade) %>% #selects specific vectors [columns of data]
   mutate(date = date(ymd_hms(datetime, tz="America/Denver"))) %>%
   st_as_sf(coords=c("longitude", "latitude"), crs=4326) #define coordinate reference system
-
-#Write data 
-write.csv(inat_obs_sf, paste0("C:/Users/dburruss/Documents/GitHub/NMDA/data/tables/inat_obs_",Sys.Date(),".xlsx"))
+  
+st_write(inat_obs_sf, dsn = paste0("iNaturalist/data/shapefile/inat_raw_data_",Sys.Date(),".shp"),
+        driver = "ESRI Shapefile")
 
 ##### plot the data for a sanity check
 

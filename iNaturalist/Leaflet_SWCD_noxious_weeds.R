@@ -18,14 +18,20 @@ library(leaflet.extras)
 
 ##### Prepare data for the leaflet map
 #read in shapefile of the SWCDs
-SWCDs <- read_sf('C:/Users/dburruss/Documents/GIS/Boundaries/nmswcd/nmswcd.shp') %>%
+SWCDs <- read_sf('data/shapefiles/nmswcd/nmswcd.shp') %>%
   mutate(NAME = ifelse(NAME=="Edgewood", "Tri-County", NAME))
 #st_crs(SWCDs)
 SWCDs <- st_make_valid(st_transform(SWCDs, crs = '+proj=longlat +datum=WGS84')) #convert shapefile to match leaflet map
 #plot(SWCDs)
 
-#Use data from the Access_iNat_data.R script
+#Use data gathered from the Access_iNat_data.R script
+inat_obs_sf <- read.csv("iNaturalist/data/inat_raw_data_2025-01-22.csv") %>%
+  select(longitude, latitude, datetime, common_name, scientific_name, quality_grade) %>% #selects specific vectors [columns of data]
+  mutate(date = date(ymd_hms(datetime, tz="America/Denver"))) %>%
+  st_as_sf(coords=c("longitude", "latitude"), crs=4326) #define coordinate reference system for original data
+
 inat_obs_sf <- st_make_valid(st_transform(inat_obs_sf, crs = '+proj=longlat +datum=WGS84')) #convert shapefile to match leaflet map
+
 
 #calculate the percentage of each sp.for all observations within a SWCD
 ggplot() +
@@ -167,7 +173,7 @@ nox_pcnt <- leaflet() %>% #initializes the map widget
   
 nox_pcnt              
               
-saveWidget(nox_pcnt, file = 'C:/Users/dburruss/Documents/R/iNat_weed_obs.html')        
+saveWidget(nox_pcnt, file = 'iNaturalist/iNat_weed_obs.html')        
 
 
 
