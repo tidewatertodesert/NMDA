@@ -75,7 +75,6 @@ for (i in list$EDDMapS_subnum) {
 }
 
 ##### some cleaning required for EDDMapS data
-
 #remove the JSON structure from var names
 colnames(nox_emd) <- gsub("^data\\.", "", colnames(nox_emd))
 
@@ -84,78 +83,133 @@ column_classes <- sapply(nox_emd, class)
 list_columns <- names(column_classes[column_classes == "list"])
 
 #remove NA data !!!!!!!!!!!!!!!!!!!NEED TO EMAIL EDDMAPS THAT THIS IS OCCURRING. PROBABLE ISSUE WITH THEIR API
+#remove vectors/columns of class 'list' for now
 nox_emd <- nox_emd %>%
   filter(!is.na(coordinates)) %>%
   select(-nextpage, -previouspage, -page, -totalrows) %>%
   select(-all_of(list_columns))
   
 
-#####plot data
-# Download New Mexico state boundaries
-states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% #grabs a map of US states
-  filter(ID %in% c("new mexico","arizona","texas","colorado")) # filters the polygon to include only rows where column ID == 'new mexico'
-
-counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
-
-#extract x and y values for plots
-coords <- strsplit(nox_emd$coordinates, ",\\s*")
-nox_emd$latitude <- as.numeric(sapply(coords, `[`, 1))
-nox_emd$longitude <- as.numeric(sapply(coords, `[`, 2))
-
-# Now create the plot using the new latitude and longitude columns
-plot(nox_emd$longitude, nox_emd$latitude, 
-     col=as.factor(nox_emd$scientificname), 
-     pch=20, cex=1, 
-     xlab="Longitude", 
-     ylab="Latitude", 
-     main="Noxious Weeds in New Mexico",
-     xlim=c(-109.05, -103),
-     ylim=c(31.4, 37.0))
-
-plot(counties, col=NA,
-     border="gray50",
-     lwd=0.25,
-     add=TRUE)
-
-plot(states, 
-     col=NA, 
-     border=adjustcolor("red", alpha.f = 0.25),  # Set alpha transparency level (0 = fully transparent, 1 = fully opaque)
-     lwd=5, 
-     add=TRUE)
-
-#####separate data by geotype (point, line, polygon)
+#####separate data by geotype (point, line, polygon, multipolygon) and save
 
 #points data
-nox_emd %>%
+points_shp <- nox_emd %>%
   filter(geogtype=="Point") %>%
-  write.csv(paste0("data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv"))
+  mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
+  st_as_sf() 
+  #write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
   
-NEED TO SORT OUT POLYGON DATA ISSUES
+st_write(points_shp, 
+         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/points_raw",Sys.Date(),".shp"),
+         driver = "ESRI Shapefile",
+         append = FALSE)  # Overwrite if the file already exists
+         
+  
+#Polygon
+polygon_shp <- nox_emd %>%
+  filter(geogtype=="Polygon") %>%
+  mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
+  st_as_sf() 
+#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
 
-#Polygons
-test <- nox_emd %>%
-  filter(geogtype=="MultiPolygons") %>%
-  write.csv(paste0("data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv"))
+st_write(points_shp, 
+         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
+         driver = "ESRI Shapefile",
+         append = FALSE)  # Overwrite if the file already exists
 
-test$geogwkt[1]
+#MultiPolygon
+multipolygon_shp <- nox_emd %>%
+  filter(geogtype=="MultiPolygon") %>%
+  mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
+  st_as_sf() 
+#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
 
-unique(nox_emd$geogtype)
+st_write(points_shp, 
+         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
+         driver = "ESRI Shapefile",
+         append = FALSE)  # Overwrite if the file already exists
 
 
+# #####plot data for sanity check
+# # Download New Mexico state boundaries
+# states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% #grabs a map of US states
+#   filter(ID %in% c("new mexico","arizona","texas","colorado")) # filters the polygon to include only rows where column ID == 'new mexico'
+# 
+# counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
+# 
+# #extract x and y values for plots
+# coords <- strsplit(nox_emd$coordinates, ",\\s*")
+# nox_emd$latitude <- as.numeric(sapply(coords, `[`, 1))
+# nox_emd$longitude <- as.numeric(sapply(coords, `[`, 2))
+# 
+# Now create the plot using the new latitude and longitude columns
+# plot(points_shp$scientificname,
+#      col=as.factor(points_shp$scientificname),
+#      pch=20, cex=1,
+#      xlab="Longitude",
+#      ylab="Latitude",
+#      main="Noxious Weeds in New Mexico")
+#      
+#      ,
+#      xlim=c(-109.05, -103),
+#      ylim=c(31.4, 37.0))
+# 
+# plot(counties, col=NA,
+#      border="gray50",
+#      lwd=0.25,
+#      add=TRUE)
+# 
+# plot(states,
+#      col=NA,
+#      border=adjustcolor("red", alpha.f = 0.25),  # Set alpha transparency level (0 = fully transparent, 1 = fully opaque)
+#      lwd=5,
+#      add=TRUE)
 
-#MultiPolygons
+# Download New Mexico state boundaries
+states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% 
+  filter(ID %in% c("new mexico", "arizona", "texas", "colorado"))
 
-nox_emd_na <- nox_emd %>%
-  filter(is.na(geogtype))
+# Load county boundaries for visualization
+counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
 
+#ggplot map 
+ggplot() +
+  
+  # Overlay county boundaries
+  geom_sf(data = counties,
+          fill = NA,
+          color = "gray50",
+          size = 0.25) +
+  
+  # Plot the background state boundaries (New Mexico, Arizona, Texas, and Colorado)
+  geom_sf(data = states, 
+          fill = NA, 
+          color = alpha("red",0.25), 
+          linewidth = 1.5) +
+  
+  # Plot the points from your points_shp dataset
+  geom_sf(data = points_shp, 
+          aes(color = as.factor(scientificname)),  # Color points by scientific name
+          shape = 16, size = 2) +
+  
+  # Overlay the polygons from polygon_shp
+  geom_sf(data = polygon_shp, 
+          aes(fill = as.factor(scientificname), 
+          color = as.factor(scientificname)), 
+          alpha = 0.2) +
+  
+  # Overlay the multipolygons from multipolygon_shp
+  geom_sf(data = multipolygon_shp, 
+          aes(fill = as.factor(scientificname), 
+          color = as.factor(scientificname)),
+          alpha = 0.2) +
+  
+  # Customize plot appearance
+  labs(title = "Noxious Weeds in New Mexico",
+       x = "Longitude", 
+       y = "Latitude") +
+  theme_classic() +  # Use a minimal theme for the plot
+  theme(legend.position = "none",) +  # Remove the legend if you don't need it
+  coord_sf(xlim = c(-109.05, -103), ylim = c(31.4, 37.0))  # Set the coordinate limits for New Mexico
 
-
-#write out raw data
-write.csv(nox_emd,paste0("data/tables/EDDMapS_raw/nox_emd_data_",Sys.Date(),".csv"))
-
-# #convert to a shapefile
-# nox_emd_sf <- st_as_sf(nox_emd, coords = c("longitude", "latitude"), crs = 4326)
-
-# #write shapefile out
-# st_write(nox_emd_sf, "data/shapefiles/Processed_NW_data/EDDMapS_NM_NW.shp")
-
+ggsave("dashboard/data/Noxious_weeds_map.jpg")

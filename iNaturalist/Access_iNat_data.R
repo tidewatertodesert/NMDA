@@ -8,8 +8,6 @@ library(sf)
 library(tmap)
 library(lubridate)
 
-#setwd("C:/Users/dburruss/Documents/R/inaturalist/")
-
 #define region of interests [approx. extent of NM]
 bbox_new_mexico <- c(31.33216, -109.050431, 37.000233, -103.002043)
 
