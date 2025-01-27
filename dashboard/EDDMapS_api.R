@@ -4,6 +4,7 @@ library(tidyverse)
 library(readxl)
 library(jsonlite)
 library(sf)
+library(viridis)
 
 # download all of the EDDMapS data for listed species
 
@@ -100,7 +101,7 @@ points_shp <- nox_emd %>%
   #write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
   
 st_write(points_shp, 
-         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/points_raw",Sys.Date(),".shp"),
+         dsn = paste0("EDDMapS/EDDMapS_raw/points_raw",Sys.Date(),".shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
          
@@ -112,8 +113,8 @@ polygon_shp <- nox_emd %>%
   st_as_sf() 
 #write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
 
-st_write(points_shp, 
-         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
+st_write(polygon_shp, 
+         dsn = paste0("EDDMapS/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
 
@@ -124,47 +125,13 @@ multipolygon_shp <- nox_emd %>%
   st_as_sf() 
 #write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
 
-st_write(points_shp, 
-         dsn = paste0("dashboard/data/shapefiles/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
+st_write(multipolygon_shp, 
+         dsn = paste0("EDDMapS/EDDMapS_raw/multipolygon_raw",Sys.Date(),".shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
 
 
 # #####plot data for sanity check
-# # Download New Mexico state boundaries
-# states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% #grabs a map of US states
-#   filter(ID %in% c("new mexico","arizona","texas","colorado")) # filters the polygon to include only rows where column ID == 'new mexico'
-# 
-# counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
-# 
-# #extract x and y values for plots
-# coords <- strsplit(nox_emd$coordinates, ",\\s*")
-# nox_emd$latitude <- as.numeric(sapply(coords, `[`, 1))
-# nox_emd$longitude <- as.numeric(sapply(coords, `[`, 2))
-# 
-# Now create the plot using the new latitude and longitude columns
-# plot(points_shp$scientificname,
-#      col=as.factor(points_shp$scientificname),
-#      pch=20, cex=1,
-#      xlab="Longitude",
-#      ylab="Latitude",
-#      main="Noxious Weeds in New Mexico")
-#      
-#      ,
-#      xlim=c(-109.05, -103),
-#      ylim=c(31.4, 37.0))
-# 
-# plot(counties, col=NA,
-#      border="gray50",
-#      lwd=0.25,
-#      add=TRUE)
-# 
-# plot(states,
-#      col=NA,
-#      border=adjustcolor("red", alpha.f = 0.25),  # Set alpha transparency level (0 = fully transparent, 1 = fully opaque)
-#      lwd=5,
-#      add=TRUE)
-
 # Download New Mexico state boundaries
 states <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% 
   filter(ID %in% c("new mexico", "arizona", "texas", "colorado"))
@@ -174,35 +141,15 @@ counties <- st_as_sf(maps::map("county", fill = TRUE, plot = FALSE))
 
 #ggplot map 
 ggplot() +
+  geom_sf(data = counties, fill = NA, color = "gray50", size = 0.25) +
+  geom_sf(data = states, fill = NA, color = alpha("red",0.25), linewidth = 1.5) + 
   
-  # Overlay county boundaries
-  geom_sf(data = counties,
-          fill = NA,
-          color = "gray50",
-          size = 0.25) +
+  geom_sf(data = points_shp, aes(color = as.factor(scientificname)), shape = 16, size = 2) +
+  geom_sf(data = polygon_shp, aes(fill = as.factor(scientificname), color = as.factor(scientificname)), alpha = 0.2) +
+  geom_sf(data = multipolygon_shp, aes(fill = as.factor(scientificname), color = as.factor(scientificname)), alpha = 0.2) + 
   
-  # Plot the background state boundaries (New Mexico, Arizona, Texas, and Colorado)
-  geom_sf(data = states, 
-          fill = NA, 
-          color = alpha("red",0.25), 
-          linewidth = 1.5) +
-  
-  # Plot the points from your points_shp dataset
-  geom_sf(data = points_shp, 
-          aes(color = as.factor(scientificname)),  # Color points by scientific name
-          shape = 16, size = 2) +
-  
-  # Overlay the polygons from polygon_shp
-  geom_sf(data = polygon_shp, 
-          aes(fill = as.factor(scientificname), 
-          color = as.factor(scientificname)), 
-          alpha = 0.2) +
-  
-  # Overlay the multipolygons from multipolygon_shp
-  geom_sf(data = multipolygon_shp, 
-          aes(fill = as.factor(scientificname), 
-          color = as.factor(scientificname)),
-          alpha = 0.2) +
+  scale_color_viridis(discrete = TRUE, option = "turbo") +
+  scale_fill_viridis(discrete = TRUE, option = "turbo") +
   
   # Customize plot appearance
   labs(title = "Noxious Weeds in New Mexico",
@@ -212,4 +159,4 @@ ggplot() +
   theme(legend.position = "none",) +  # Remove the legend if you don't need it
   coord_sf(xlim = c(-109.05, -103), ylim = c(31.4, 37.0))  # Set the coordinate limits for New Mexico
 
-ggsave("dashboard/data/Noxious_weeds_map.jpg")
+ggsave("EDDMapS/Noxious_weeds_map.jpg")

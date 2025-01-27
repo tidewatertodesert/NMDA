@@ -8,29 +8,36 @@ library(tigris)
 library(lubridate)
 
 ####grab the shapefiles
-points <- st_read("C:/Users/dburruss/Documents/Nox_Weeds/Data/EDDMapS_data/Manual_download/47958_14.10.24/observations.gpkg", layer = "PointLayer")
+
+points <- st_read("EDDMapS/EDDMapS_raw/points_raw2025-01-23.shp")
 message(nrow(points)," features in points layer.")
 names(points)
 
-lines <- st_read("C:/Users/dburruss/Documents/Nox_Weeds/Data/EDDMapS_data/Manual_download/47958_14.10.24/observations.gpkg", layer = "LineLayer")
-message(nrow(lines)," features in lines layer.")
-
-polygon <- st_read("C:/Users/dburruss/Documents/Nox_Weeds/Data/EDDMapS_data/Manual_download/47958_14.10.24/observations.gpkg", layer = "PolygonLayer") %>%
+sinpolyn <- st_read("EDDMapS/EDDMapS_raw/polygon_raw2025-01-23.shp") %>%
   st_make_valid()
-message(nrow(polygon)," features in polygon layer.")
+message(nrow(sinpolyn)," features in sinpolyn layer.")
+names(sinpolyn)
+
+mulpoly <- st_read("EDDMapS/EDDMapS_raw/multipolygon_raw2025-01-23.shp") %>%
+  st_make_valid()
+message(nrow(mulpoly)," features in mulpoly layer.")
+names(mulpoly)
+
+#join polygons types for simpler processing
+polygons <- rbind(sinpolyn, mulpoly)
+message(nrow(polygons)," features in combined polygon layer and ", nrow(polygon)+nrow(mulpolygon)," in simply polygon and mulpolygon layers")
+
 
 
 ####bring in state county and swcd data to add column to each shapefile
 #read in shapefile of the SWCDs
-SWCD <- st_read('C:/Users/dburruss/Documents/GIS/Boundaries/nmswcd/nmswcd.shp') %>%
+SWCD <- st_read("data/shapefiles/nmswcd/nmswcd.shp") %>%
+  st_make_valid(SWCD) %>% # fix invalid geometries
   mutate(NAME = ifelse(NAME=="Edgewood", "Tri-County", NAME)) %>%
   st_transform(crs=st_crs(points)) %>%
   select(NAME, Abbr) %>%
   rename(SWCD_name = NAME,
          SWCD_abbr = Abbr) 
-  
-# st_is_valid(SWCD, reason=TRUE) 
-SWCD <- st_make_valid(SWCD) # fix invalid geometries
   
 #identical(st_crs(points), st_crs(SWCD)) #test if crs match
 
