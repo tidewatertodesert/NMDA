@@ -3,6 +3,7 @@
 #leaflet maps: https://leaflet-extras.github.io/leaflet-providers/preview/
 
 library(leaflet)
+library(leaflet.extras2)
 library(magrittr)
 library(sf)
 library(terra)
@@ -24,14 +25,19 @@ SWCDs <- read_sf('data/shapefiles/nmswcd/nmswcd.shp') %>%
 SWCDs <- st_make_valid(st_transform(SWCDs, crs = '+proj=longlat +datum=WGS84')) #convert shapefile to match leaflet map
 #plot(SWCDs)
 
-#Use data gathered from the Access_iNat_data.R script
-inat_obs_sf <- read.csv("iNaturalist/data/inat_raw_data_2025-01-22.csv") %>%
-  select(longitude, latitude, datetime, common_name, scientific_name, quality_grade) %>% #selects specific vectors [columns of data]
-  mutate(date = date(ymd_hms(datetime, tz="America/Denver"))) %>%
-  st_as_sf(coords=c("longitude", "latitude"), crs=4326) #define coordinate reference system for original data
+# #Use data gathered from the Access_iNat_data.R script
+# inat_obs_sf <- read.csv("iNaturalist/data/inat_raw_data.csv") %>%
+#   select(longitude, latitude, datetime, common_name, scientific_name, quality_grade) %>% #selects specific vectors [columns of data]
+#   mutate(datetime = with_tz(ymd_hms(datetime), "America/Denver")) %>%
+#   st_as_sf(coords=c("longitude", "latitude"), crs=4326) %>% #define coordinate reference system for original data
+#   mutate(scientific_name = as.character(scientific_name))
+
+inat_obs_sf <- st_read("iNaturalist/data/shapefile/inat_raw_data_.shp") %>%
+  mutate(scientific_name = as.character(scntfc_)) %>%
+  filter(!is.na(datetim)) %>%
+  arrange(desc(datetim))
 
 inat_obs_sf <- st_make_valid(st_transform(inat_obs_sf, crs = '+proj=longlat +datum=WGS84')) #convert shapefile to match leaflet map
-
 
 #calculate the percentage of each sp.for all observations within a SWCD
 ggplot() +
@@ -73,10 +79,10 @@ SWCDs_vals <- SWCDs %>%
   ungroup() %>%
   mutate(popup_content = ifelse(grepl("NA", popup_content),"No Records",popup_content))
 
-#fun colors for points
+#better colors for points
 species_palette <- colorFactor(palette = turbo(n = length(unique(inat_obs_sf$scientific_name))),
                                domain = inat_obs_sf$scientific_name)
-##### Create custom formating 
+##### Create custom formatting 
 add_custom_layer_control <- function(map) {
   htmlwidgets::onRender(map, '
     function(el, x) {
@@ -160,8 +166,20 @@ nox_pcnt <- leaflet() %>% #initializes the map widget
                      textsize = "10px",
                      direction = "auto"),
                    popup = ~paste("<strong>Species:</strong><br><em>", scientific_name, "</em><br>",
-                                  "<strong>Observation Date:</strong><br>", date, "<br>")) %>%
+                                  "<strong>Observation Date:</strong><br>", datetim, "<br>")) %>%
+                     
+                     # "<strong>Species:</strong><br><em>", scientific_name, "</em><br>",
+                     # "<strong>Observation Date:</strong><br>", date, "<br>")
+                   
             
+  addTimeslider(data=inat_obs_sf,
+                
+                options = timesliderOptions(
+                  range = TRUE,
+                  position = "bottomright",
+                  timeAttribute = "datetim")
+                ) %>%
+
   addLayersControl(
     baseGroups = c("Simple","Open Street Map","CyclOSM","ESRI World Imagery"),
     overlayGroups = c("Observations","SWCDs"),
@@ -174,6 +192,4 @@ nox_pcnt <- leaflet() %>% #initializes the map widget
 nox_pcnt              
               
 saveWidget(nox_pcnt, file = 'iNaturalist/iNat_weed_obs.html')        
-
-
 

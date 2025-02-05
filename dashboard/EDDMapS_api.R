@@ -89,7 +89,7 @@ nox_emd <- nox_emd %>%
   filter(!is.na(coordinates)) %>%
   select(-nextpage, -previouspage, -page, -totalrows) %>%
   select(-all_of(list_columns))
-  
+
 
 #####separate data by geotype (point, line, polygon, multipolygon) and save
 
@@ -97,8 +97,8 @@ nox_emd <- nox_emd %>%
 points_shp <- nox_emd %>%
   filter(geogtype=="Point") %>%
   mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
-  st_as_sf() 
-  #write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
+  st_as_sf() %>%
+  write.csv(nox_emd, paste0("EDDMapS/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
   
 st_write(points_shp, 
          dsn = paste0("EDDMapS/EDDMapS_raw/points_raw",Sys.Date(),".shp"),

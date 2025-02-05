@@ -7,18 +7,31 @@ library(stars)
 library(tigris)
 library(lubridate)
 
+#Run this after the EDDMapS_api.R script
+
+#####select columns to keep
+columns <- c("scientificname",
+             "displayname","coordinates",
+             "geogtype","geogwkt",
+             "observationdate",
+             "infestationstatus",
+             "eradicationstatus",
+             "infestedarea",
+             "infestedareaunits",
+             "reporter")
+
 ####grab the shapefiles
 
-points <- st_read("EDDMapS/EDDMapS_raw/points_raw2025-01-23.shp")
+points <- st_read("EDDMapS/EDDMapS_raw/points_raw2025-01-27.shp") %>%
 message(nrow(points)," features in points layer.")
 names(points)
 
-sinpolyn <- st_read("EDDMapS/EDDMapS_raw/polygon_raw2025-01-23.shp") %>%
+sinpolyn <- st_read("EDDMapS/EDDMapS_raw/polygon_raw2025-01-27.shp") %>%
   st_make_valid()
 message(nrow(sinpolyn)," features in sinpolyn layer.")
 names(sinpolyn)
 
-mulpoly <- st_read("EDDMapS/EDDMapS_raw/multipolygon_raw2025-01-23.shp") %>%
+mulpoly <- st_read("EDDMapS/EDDMapS_raw/multipolygon_raw2025-01-27.shp") %>%
   st_make_valid()
 message(nrow(mulpoly)," features in mulpoly layer.")
 names(mulpoly)
@@ -27,6 +40,7 @@ names(mulpoly)
 polygons <- rbind(sinpolyn, mulpoly)
 message(nrow(polygons)," features in combined polygon layer and ", nrow(polygon)+nrow(mulpolygon)," in simply polygon and mulpolygon layers")
 
+message("Total records: ",nrow(points)+nrow(sinpolyn)+nrow(mulpoly))
 
 
 ####bring in state county and swcd data to add column to each shapefile
@@ -41,18 +55,14 @@ SWCD <- st_read("data/shapefiles/nmswcd/nmswcd.shp") %>%
   
 #identical(st_crs(points), st_crs(SWCD)) #test if crs match
 
-names(SWCD)
-
 #grab NM county boundaries
-
 nm_COUNTY <- counties(state = "NM", cb = TRUE) %>%  # cb = TRUE for simplified geometries
   st_transform(crs=st_crs(points)) %>%
   select(NAME, NAMELSAD) %>%
   rename(County = NAME,
          County_lsad = NAMELSAD)
 
-identical(st_crs(points), st_crs(nm_COUNTY)) #test if crs match
-  
+#identical(st_crs(points), st_crs(nm_COUNTY)) #test if crs match
 names(nm_COUNTY)
 
 #### Compute the county and swcd intersect for points and polygon layers
