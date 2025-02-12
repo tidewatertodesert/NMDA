@@ -3,6 +3,7 @@
 #leaflet maps: https://leaflet-extras.github.io/leaflet-providers/preview/
 
 library(leaflet)
+library(leaflet.extras)
 library(leaflet.extras2)
 library(magrittr)
 library(sf)
@@ -15,7 +16,7 @@ library(RColorBrewer)
 library(viridis)
 library(readxl)
 library(tidyverse)
-library(leaflet.extras)
+
 
 ##### Prepare data for the leaflet map
 #read in shapefile of the SWCDs
@@ -35,7 +36,7 @@ SWCDs <- st_make_valid(st_transform(SWCDs, crs = '+proj=longlat +datum=WGS84')) 
 inat_obs_sf <- st_read("iNaturalist/data/shapefile/inat_raw_data_.shp") %>%
   mutate(scientific_name = as.character(scntfc_)) %>%
   filter(!is.na(datetim)) %>%
-  arrange(desc(datetim))
+  arrange(desc(datetim)) 
 
 inat_obs_sf <- st_make_valid(st_transform(inat_obs_sf, crs = '+proj=longlat +datum=WGS84')) #convert shapefile to match leaflet map
 

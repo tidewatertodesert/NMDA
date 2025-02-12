@@ -97,11 +97,14 @@ nox_emd <- nox_emd %>%
 points_shp <- nox_emd %>%
   filter(geogtype=="Point") %>%
   mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
-  st_as_sf() %>%
-  write.csv(nox_emd, paste0("EDDMapS/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
+  st_as_sf()
+
+#write out csv
+#write.csv(nox_emd, paste0("EDDMapS/EDDMapS_raw/nox_emd_raw_pts.csv")) 
   
+#save shapefile - fields will be abbreviated
 st_write(points_shp, 
-         dsn = paste0("EDDMapS/EDDMapS_raw/points_raw",Sys.Date(),".shp"),
+         dsn = paste0("EDDMapS/EDDMapS_raw/points_raw.shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
          
@@ -111,10 +114,10 @@ polygon_shp <- nox_emd %>%
   filter(geogtype=="Polygon") %>%
   mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
   st_as_sf() 
-#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
+#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts.csv")) 
 
 st_write(polygon_shp, 
-         dsn = paste0("EDDMapS/EDDMapS_raw/polygon_raw",Sys.Date(),".shp"),
+         dsn = paste0("EDDMapS/EDDMapS_raw/polygon_raw.shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
 
@@ -123,10 +126,10 @@ multipolygon_shp <- nox_emd %>%
   filter(geogtype=="MultiPolygon") %>%
   mutate(geometry = st_as_sfc(geogwkt, crs = 4326)) %>% # Add a spatial geometry column
   st_as_sf() 
-#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts_",Sys.Date(),".csv")) 
+#write.csv(paste0("dashboard/data/tables/EDDMapS_raw/nox_emd_raw_pts.csv")) 
 
 st_write(multipolygon_shp, 
-         dsn = paste0("EDDMapS/EDDMapS_raw/multipolygon_raw",Sys.Date(),".shp"),
+         dsn = paste0("EDDMapS/EDDMapS_raw/multipolygon_raw.shp"),
          driver = "ESRI Shapefile",
          append = FALSE)  # Overwrite if the file already exists
 
