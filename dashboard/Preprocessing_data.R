@@ -8,40 +8,73 @@ library(tigris)
 library(lubridate)
 
 #Run this after the EDDMapS_api.R script
-
-#####select columns to keep
-columns <- c("scientificname",
-             "displayname","coordinates",
-             "geogtype","geogwkt",
-             "observationdate",
-             "infestationstatus",
-             "eradicationstatus",
-             "infestedarea",
-             "infestedareaunits",
-             "reporter")
-
 ####grab the shapefiles
 
-points <- st_read("EDDMapS/EDDMapS_raw/points_raw2025-01-27.shp") %>%
+#point data
+points <- st_read("EDDMapS/EDDMapS_raw/points_raw.shp")
 message(nrow(points)," features in points layer.")
-names(points)
+#names(points)
 
-sinpolyn <- st_read("EDDMapS/EDDMapS_raw/polygon_raw2025-01-27.shp") %>%
+#simple polygons
+sinpolyn <- st_read("EDDMapS/EDDMapS_raw/polygon_raw.shp") %>%
   st_make_valid()
 message(nrow(sinpolyn)," features in sinpolyn layer.")
-names(sinpolyn)
+#names(sinpolyn)
 
-mulpoly <- st_read("EDDMapS/EDDMapS_raw/multipolygon_raw2025-01-27.shp") %>%
+#multipart polygons
+mulpoly <- st_read("EDDMapS/EDDMapS_raw/multipolygon_raw.shp") %>%
   st_make_valid()
 message(nrow(mulpoly)," features in mulpoly layer.")
-names(mulpoly)
+#names(mulpoly)
 
 #join polygons types for simpler processing
 polygons <- rbind(sinpolyn, mulpoly)
-message(nrow(polygons)," features in combined polygon layer and ", nrow(polygon)+nrow(mulpolygon)," in simply polygon and mulpolygon layers")
+message(nrow(polygons)," features in combined polygon layer")
 
 message("Total records: ",nrow(points)+nrow(sinpolyn)+nrow(mulpoly))
 
+#####select columns to keep from records
+# columns <- c("scientificname",
+#              "displayname",
+#              "coordinates",
+#              "geogtype",
+#              "geogwkt",
+#              "observationdate",
+#              "infestationstatus",
+#              "eradicationstatus",
+#              "infestedarea",
+#              "infestedareaunits",
+#              "reporter")
+
+columns <- c("scntfcn",
+             "dsplynm",
+             "cordnts",
+             "geogtyp",
+             "geogwkt",
+             "obsrvtndn",
+             "infsttn",
+             "erdctns",
+             "infestdr",
+             "infstdrn",
+             "reportr")
+
+
+#select columns from point data
+points_sl <- points %>%
+  dplyr::select(columns)
+
+#select columns from combined polygon data
+polygons_sl <- polygons %>%
+  select(columns)
+
+#convert polygon centroids to points (dashboard summaries only use point data)
+pt_cent <- polygons_sl %>%
+  st_centroid()
+
+#add centroids to points layer
+points_fin <- points_sl %>%
+  rbind(pt_cent)
+nrow(points_fin)
 
 ####bring in state county and swcd data to add column to each shapefile
 #read in shapefile of the SWCDs
@@ -70,24 +103,23 @@ points_join <- points %>%
   st_join(nm_COUNTY) %>%
   st_join(SWCD) 
 
-  summary(points_join)  
+  #summary(points_join)  
   
-polygon_int <- polygon %>%
+polygon_int <- polygons %>%
   st_intersection(SWCD) %>%
   st_intersection(nm_COUNTY)
 
 #change the format of columns to reflect data
 points_join <- points_join %>%
-  mutate(ObsDate = mdy(ObsDate),
+  mutate(ObsDate = mdy(obsrvtndn),
          Year = year(ObsDate),
-         Abundance = as.numeric(Abundance),
+         Abundance = as.numeric(abundnc),
          InfestAcre = as.numeric(InfestAcre),
-         GrossAcre = as.numeric(GrossAcre),
-         Percentcov = as.numeric(Percentcov),
-         Density = as.numeric(Density),
-         Quantity = as.numeric(Quantity),
-         QuantityU = as.numeric(QuantityU),
-         APPXQuant = as.numeric(APPXQuant))
+         GrossAcre = as.numeric(grossar),
+         Percentcov = as.numeric(prcntcv),
+         Density = as.numeric(density),
+         Quantity = as.numeric(quantty),
+         QuantityU = as.numeric(qnttynt))
 
 polygon_int <- polygon_int %>%
   mutate(ObsDate = mdy(ObsDate),
