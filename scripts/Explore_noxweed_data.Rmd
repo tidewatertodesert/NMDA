@@ -1,0 +1,169 @@
+---
+title: "Explore_noxweed_data"
+author: "D Burruss"
+date: "2025-02-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+opts_knit$set(root.dir="C:/Users/dburruss/Documents/GitHub/NMDA") # file paths are relative to the root of the project directory
+```
+
+## Grab data and plot for visual check ####
+```{r gather_data, echo=FALSE}
+library(tidyverse)
+library(sf)
+library(terra)
+
+#Open the noxious weed data
+NW <- st_read("EDDMapS/EDDMapS_raw/points_raw.shp") %>%
+  dplyr::select(objectd, scntfcn,dsplynm)
+plot(NW[1]) #plot for visual check
+
+#Open the surface ownership data
+SO <- st_read("C:/Users/dburruss/Documents/GIS/BLM_NM_Surface/BLM_NM_Surface_Management_Agency.shp") %>%
+  dplyr::select(OBJECTID, own) %>%
+  mutate(area_m2 = st_area(geometry),
+         area_km = as.numeric(area_m2)/1000000) %>% #calculate km and drop units
+  st_transform(st_crs(NW)) %>% #match CRS
+  st_make_valid() #fix invalid geometries
+
+#recode ownership names
+ownership_mapping <- c(
+  "P"   = "Private",
+  "BLM" = "BLM",
+  "S"   = "State Land",
+  "DOD" = "Dept of Defense",
+  "I"   = "Indian Land",
+  "FS"  = "U.S. Forest Service",
+  "BOR" = "Bureau of Reclamation",
+  "SGF" = "State G & F",
+  "DOE" = "Dept of Energy",
+  "NPS" = "Nat Park Service",
+  "FWS" = "U.S. FWS",
+  "SP"  = "State Park",
+  "OFA" = "Other Fed. Agcy.",
+  "DOA" = "Dept of Ag"
+)
+
+SO <- SO %>%
+  mutate(own_full = own,
+         own_full = recode(own, !!!ownership_mapping))
+
+plot(SO[2]) #plot ownership for visual check
+
+# # grab the landcover data 
+# # original and masked nlcd data is on ARP drive
+# LC <- rast("C:/Users/dburruss/Documents/GIS/nlcd_us_conus_2019/nlcd_us_conus_2019.img")
+# 
+# # download New Mexico state boundaries for clipping data
+# NM <- st_as_sf(maps::map("state", fill = TRUE, plot = FALSE)) %>% #grabs a map of US states
+#   filter(ID=="new mexico") %>% # filters the polygon to include only rows where column ID == 'new mexico'
+#   st_transform(crs=st_crs(LC))
+# 
+# #crop the raster to the NM boundary
+# LC <- mask(LC, vect(NM)) #mask raster using the NM layer
+# LC <- crop(LC, vect(NM)) #crop to NM layer
+# writeRaster(LCcc, "C:/Users/dburruss/Documents/GIS/nlcd_NM_2019/nlcd_NM_2019.tif", overwrite = TRUE)
+
+#read in cropped raster (smaller file prduced from the above script)
+LC <- rast("C:/Users/dburruss/Documents/GIS/nlcd_NM_2019/nlcd_NM_2019.tif")
+#plot(LC) #plot for visual check
+```
+
+## calculate # of points per ownership class ####
+
+```{r Ownership, echo=FALSE}
+
+####join the two datasets
+NW_own <- st_join(NW, SO)
+#head(NW_own)
+
+# #histogram of observation count by ownership class
+# ggplot(NW_own, aes(x = own_full)) +
+#   geom_bar() +
+#   labs(title = "Histogram of Observations by ownership",
+#        x = "Ownership",
+#        y = "Count of Observations") +
+#   theme_minimal() +
+#   theme(axis.text.x = element_text(angle=45, hjust = 1))
+
+#calcuate the percentage of totals oberservation per ownership category
+
+NW_own_summary <- NW_own %>%
+  group_by(own_full) %>%
+  summarize(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = (count / sum(count)) * 100)
+
+#### Summarize percentage of total NM area per ownership category
+total_area <- sum(SO$area_km)
+
+area_summary <- SO %>%
+  as_tibble() %>%
+  dplyr::select(-geometry) %>%
+  group_by(own_full) %>%
+  summarize(class_area = sum(area_km)) %>%
+  ungroup() %>%
+  mutate(area_pct = (class_area / total_area) * 100)
+#sum(area_summary$area_pct)
+
+# Plot the % area (area_pct) for each ownership category (own_full) at % observations
+ggplot(area_summary, aes(x = own_full, y = area_pct, fill = own_full)) +
+  geom_col() +
+  geom_point(data=NW_own_summary, aes(x = own_full, y = perc), color = "red", size = 3) +
+  labs(title = "Percentage of Total Area by Ownership Category",
+       x = "Ownership",
+       y = "Percentage of Total Area [bars]") +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 100, name = "Percentage of Observations [points]")) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  scale_fill_viridis_d()  # Use a visually appealing color scale
+
+ggsave("figures/Explore_NW_data/pts_x_ownership.png", width = 10, height = 6, dpi = 300)
+```
+
+```{r Landcover, echo=FALSE}
+LC_dat <- LC %>% #converts the raster matrix to a list of classifications
+  as_tibble() %>%
+  drop_na()
+
+LC_summary <- LC_dat %>%
+  count(`NLCD Land Cover Class`) %>%  # Count occurrences of each class
+  mutate(percentage = (n / sum(n)) * 100)  # Calculate percentage
+
+#extract landcover values for each point
+####join the two datasets
+NW_LC <- terra::extract(LC, NW)
+#head(NW_own)
+
+#calculate the percentage of ownership for all points
+NW_LC_summary <- NW_LC %>%
+  group_by(`NLCD Land Cover Class`) %>%
+  summarize(count = n()) %>%
+  ungroup() %>%
+  mutate(perc = (count / sum(count)) * 100)
+
+# Plot the data
+ggplot(LC_summary, aes(x = `NLCD Land Cover Class`, y = percentage, fill = `NLCD Land Cover Class`)) +
+  geom_col() +
+  geom_point(data=NW_LC_summary, aes(x = `NLCD Land Cover Class`, y = perc), color = "red", size = 3) +
+  
+  scale_y_continuous(labels = scales::comma_format()) +  # Format y-axis to avoid scientific notation
+  labs(title = "Percentage of NLCD Land Cover Classes",
+       x = "NLCD Land Cover Class",
+       y = "Percentage of Total Area [bars]",
+       fill = "Land Cover Class") +
+  scale_y_continuous(sec.axis = sec_axis(~ . / 100, name = "Percentage of Observations [points]")) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") +
+  scale_fill_viridis_d(option = "inferno", direction = -1)  # Use a visually appealing color scale
+
+ggsave("figures/Explore_NW_data/pts_x_landcover.png", width = 10, height = 6, dpi = 300)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

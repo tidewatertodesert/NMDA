@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="Feature_OID_4" id="Feature_OID_4">
+	<SimpleField name="AREA_AC" type="float"></SimpleField>
+	<SimpleField name="GPS_LAT_DEC_DEG" type="float"></SimpleField>
+	<SimpleField name="GPS_LON_DEC_DEG" type="float"></SimpleField>
+	<SimpleField name="VPDUNIT_ID" type="string"></SimpleField>
+	<SimpleField name="SUID" type="string"></SimpleField>
+	<SimpleField name="PROC_FOREST" type="string"></SimpleField>
+	<SimpleField name="WATERSHED_CODE" type="string"></SimpleField>
+	<SimpleField name="OWNERSHIP" type="string"></SimpleField>
+	<SimpleField name="ACTIVITY_CODE" type="string"></SimpleField>
+	<SimpleField name="ACTIVITY" type="string"></SimpleField>
+	<SimpleField name="ACTIVITY_SUB_UNIT_NAME" type="string"></SimpleField>
+	<SimpleField name="FUND_CODES" type="string"></SimpleField>
+	<SimpleField name="EQUIPMENT" type="string"></SimpleField>
+	<SimpleField name="COST_PER_UOM" type="float"></SimpleField>
+	<SimpleField name="NEPA_DOC_NAME" type="string"></SimpleField>
+	<SimpleField name="DATE_ACCOMPLISHED" type="string"></SimpleField>
+	<SimpleField name="DATE_COMPLETED" type="string"></SimpleField>
+	<SimpleField name="FISCAL_YEAR_ACCOMPLISHED" type="int"></SimpleField>
+	<SimpleField name="FISCAL_YEAR_COMPLETED" type="int"></SimpleField>
+	<SimpleField name="NBR_UNITS_ACCOMPLISHED" type="float"></SimpleField>
+	<SimpleField name="EXAM_L_NAME" type="string"></SimpleField>
+	<SimpleField name="EXAM_F_NAME" type="string"></SimpleField>
+	<SimpleField name="SPECIES" type="string"></SimpleField>
+	<SimpleField name="SPECIES_CATEGORY" type="string"></SimpleField>
+	<SimpleField name="TOTAL_ACRES" type="float"></SimpleField>
+	<SimpleField name="STATE_ABBR" type="string"></SimpleField>
+	<SimpleField name="EVENT_CN" type="string"></SimpleField>
+	<SimpleField name="ACTIVITY_REMARKS" type="string"></SimpleField>
+	<SimpleField name="TREATMENTAREASUBUNIT_REMARKS" type="string"></SimpleField>
+	<SimpleField name="SHAPE_Length" type="float"></SimpleField>
+	<SimpleField name="SHAPE_Area" type="float"></SimpleField>
+</Schema>
+<Folder><name>Feature_OID_4</name>
+  <Placemark>
+	<name>030605CIVU2021TREAT1130</name>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Feature_OID_4">
+		<SimpleData name="AREA_AC">0.4441</SimpleData>
+		<SimpleData name="GPS_LAT_DEC_DEG">33.393629</SimpleData>
+		<SimpleData name="GPS_LON_DEC_DEG">-108.579114</SimpleData>
+		<SimpleData name="VPDUNIT_ID">0306</SimpleData>
+		<SimpleData name="SUID">030605NOXWEED100001</SimpleData>
+		<SimpleData name="PROC_FOREST">0306</SimpleData>
+		<SimpleData name="WATERSHED_CODE">150400010502</SimpleData>
+		<SimpleData name="OWNERSHIP">FS</SimpleData>
+		<SimpleData name="ACTIVITY_CODE">2530</SimpleData>
+		<SimpleData name="ACTIVITY">INVASIVES - MECHANICAL /PHYSICAL</SimpleData>
+		<SimpleData name="ACTIVITY_SUB_UNIT_NAME">030605CIVU2021TREAT1130</SimpleData>
+		<SimpleData name="FUND_CODES">CONT</SimpleData>
+		<SimpleData name="EQUIPMENT">Machette</SimpleData>
+		<SimpleData name="COST_PER_UOM">0</SimpleData>
+		<SimpleData name="NEPA_DOC_NAME">(PALS)NOXIOUS WEED MANAGEMENT EA</SimpleData>
+		<SimpleData name="DATE_ACCOMPLISHED">2024/08/08 00:00:00+00</SimpleData>
+		<SimpleData name="DATE_COMPLETED">2024/08/08 00:00:00+00</SimpleData>
+		<SimpleData name="FISCAL_YEAR_ACCOMPLISHED">2024</SimpleData>
+		<SimpleData name="FISCAL_YEAR_COMPLETED">2024</SimpleData>
+		<SimpleData name="NBR_UNITS_ACCOMPLISHED">0.2</SimpleData>
+		<SimpleData name="EXAM_L_NAME">Gutierrez</SimpleData>
+		<SimpleData name="EXAM_F_NAME">Keila</SimpleData>
+		<SimpleData name="SPECIES">CIVU - bull thistle</SimpleData>
+		<SimpleData name="SPECIES_CATEGORY">Plant</SimpleData>
+		<SimpleData name="TOTAL_ACRES">0.444</SimpleData>
+		<SimpleData name="STATE_ABBR">NM</SimpleData>
+		<SimpleData name="EVENT_CN">7151907010602</SimpleData>
+		<SimpleData name="ACTIVITY_REMARKS">Bull thistle retreatment in coordination with Heart of the Gila &amp; NMWild (funded by NM Dept of Ag)</SimpleData>
+		<SimpleData name="TREATMENTAREASUBUNIT_REMARKS">AGOL via TESP_IS Bulk Loader 3.20.3.3</SimpleData>
+		<SimpleData name="SHAPE_Length">0.00255359538009427</SimpleData>
+		<SimpleData name="SHAPE_Area">1.74153999990368e-07</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>-108.579604,33.3941620000001 -108.578746,33.393472 -108.578658,33.393444 -108.578746,33.3934140000001 -108.578762,33.3934400000001 -108.579188,33.3935000000001 -108.579188,33.393534 -108.579534,33.3939100000001 -108.579604,33.3941620000001</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+</Folder>
+</Document></kml>
