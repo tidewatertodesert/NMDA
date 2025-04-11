@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = FALSE)
-opts_knit$set(root.dir="C:/Users/dburruss/Documents/GitHub/NMDA") # file paths are relative to the root of the project directory
+opts_knit$set(root.dir="C:/Users/dburruss/Documents/GitHub/NMDA/") # file paths are relative to the root of the project directory
 ```
 
 ## Grab data and plot for visual check ####
@@ -18,9 +18,10 @@ library(sf)
 library(terra)
 
 #Open the noxious weed data
-NW <- st_read("EDDMapS/EDDMapS_raw/points_raw.shp") %>%
-  dplyr::select(objectd, scntfcn,dsplynm)
+NW <- st_read("EDDMapS/Processed_data/points_clean.shp") %>%
+  dplyr::select(scntfcn,dsplynm)
 plot(NW[1]) #plot for visual check
+message("Includes ",nrow(NW)," observations and ",length(unique(NW$scntfcn))," unique species.")
 
 #Open the surface ownership data
 SO <- st_read("C:/Users/dburruss/Documents/GIS/BLM_NM_Surface/BLM_NM_Surface_Management_Agency.shp") %>%
@@ -123,7 +124,7 @@ ggplot(area_summary, aes(x = own_full, y = area_pct, fill = own_full)) +
         legend.position = "none") +
   scale_fill_viridis_d()  # Use a visually appealing color scale
 
-ggsave("figures/Explore_NW_data/pts_x_ownership.png", width = 10, height = 6, dpi = 300)
+ggsave("figures/Explore_NW_data/pts_x_lownership.png", width = 10, height = 6, dpi = 300)
 ```
 
 ```{r Landcover, echo=FALSE}
@@ -165,5 +166,49 @@ ggplot(LC_summary, aes(x = `NLCD Land Cover Class`, y = percentage, fill = `NLCD
 
 ggsave("figures/Explore_NW_data/pts_x_landcover.png", width = 10, height = 6, dpi = 300)
 ```
+```{r swcd, echo=FALSE}
+#calculate the number of observations per swcd
+
+#read in the swcd data
+SWCD <- st_read("data/shapefiles/nmswcd/nmswcd.shp") %>%
+  st_make_valid() %>% #fix invalid geometries
+  mutate(NAME = ifelse(NAME=="Edgewood", "Tri-County", NAME))
+
+#ensure same CRS
+SWCD <- st_transform(SWCD, crs = st_crs(NW)) %>%
+  mutate(area_km2 = st_area(.)/ 1e6)
+
+# Spatial join: Assign each NW point to an SWCD district
+NW_with_SWCD <- st_join(NW, SWCD, left = FALSE)  # Left = FALSE keeps only matched points
+
+# Count number of locations per SWCD district
+location_counts <- NW_with_SWCD %>%
+  group_by(NAME) %>%
+  summarise(count = n())
+
+SWCD_counts <- SWCD %>%
+  left_join(st_drop_geometry(location_counts), by = "NAME") %>%
+  mutate(pnts_per_100km2 = count / as.numeric(area_km2)*100,
+         pnts_per_100km2 = if_else(is.na(pnts_per_100km2), 0, pnts_per_100km2))
+
+ggplot(SWCD_counts) +
+  geom_sf(aes(fill = pnts_per_100km2), color="white", lwd=0.1, alpha=0.75) +  
+  scale_fill_viridis_b(
+    option = "turbo", 
+    direction = -1,
+    breaks = c(0, 0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30),
+    limits = c(0, 30),
+    n.breaks = 9 # Number of color bins
+  ) +
+  geom_sf_text(aes(label = paste0(NAME, "\n", round(pnts_per_100km2, digits = 3))), size = 1.5, color = "black", check_overlap = TRUE) +
+  labs(title = "Observations density per SWCD", fill = "Observations / 100km2") +
+  theme_classic() +
+  theme(axis.title = element_blank(),
+        axis.text = element_text(size=5))
+
+ggsave("figures/Explore_NW_data/Observation_dens_x_SWCD.png", width = 10, height = 6, dpi = 300)
+
+```
+
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

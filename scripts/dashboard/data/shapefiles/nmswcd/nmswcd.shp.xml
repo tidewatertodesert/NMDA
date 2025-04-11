@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+<idinfo>
+<citation>
+<citeinfo>
+<origin>New Mexico Department of Agriculture</origin>
+<pubdate>Unknown</pubdate>
+<pubtime>Unknown</pubtime>
+<title>nmswcd</title>
+<geoform>vector digital data</geoform>
+<othercit>All District boundaries were created using SWCD legal descriptions from the NMDA, PLSS and ESRI base map data.</othercit>
+<onlink>http://rgis.unm.edu</onlink>
+</citeinfo>
+</citation>
+<descript>
+<abstract>The New Mexico Soil and Water Conservation District (SWCD) shapefile includes forty-seven boudaries which cover each SWCD throughout the State.</abstract>
+<purpose>To represent existing legal descriptions, in digital form, of the Soil and Water Conservation Districts, for the New Mexico Department of Agriculture.</purpose>
+<supplinf>The Chapparal area within La Union was fit to the legal description as best as possible, as there was no accurate North bound.</supplinf>
+</descript>
+<timeperd>
+<timeinfo>
+<rngdates>
+<begdate>2007</begdate>
+<begtime>Unknown</begtime>
+<enddate>2008</enddate>
+<endtime>Unknown</endtime>
+</rngdates>
+</timeinfo>
+<current>publication date</current>
+</timeperd>
+<status>
+<progress>Complete</progress>
+<update>As needed</update>
+</status>
+<spdom>
+<bounding>
+<westbc>-109.329118</westbc>
+<eastbc>-102.944433</eastbc>
+<northbc>37.052137</northbc>
+<southbc>31.309346</southbc>
+</bounding>
+</spdom>
+<keywords>
+<theme>
+<themekt>None.</themekt>
+<themekey>Soil and Water Conservation Districts</themekey>
+</theme>
+    <theme>
+        <themekt>ISO 19115 Topic Category</themekt> 
+        <themekey>boundaries</themekey> 
+    </theme>
+ <place>
+    <placekt>None</placekt>
+<placekey>New Mexico</placekey>
+</place>
+</keywords>
+<accconst>None.</accconst>
+<useconst>None.</useconst>
+<ptcontac>
+<cntinfo>
+<cntorgp>
+<cntorg>Spatial Applications and Research Center</cntorg>
+<cntper>Quinn Korbulic</cntper>
+</cntorgp>
+<cntaddr>
+<addrtype>mailing address</addrtype>
+<address>P.O Box 30001 Attn: Geograpy Dept.</address>
+<city>Las Cruces</city>
+<state>New Mexico</state>
+<postal>88003-8001</postal>
+<country>USA</country>
+</cntaddr>
+<cntvoice>575-646-5755</cntvoice>
+<cntemail>korbulic@ad.nmsu.edu</cntemail>
+<cntinst>Contact Geography department Secretary at New Mexico State University.</cntinst>
+</cntinfo>
+</ptcontac>
+<native>Microsoft Windows Vista Version 6.1 (Build 7601) Service Pack 1; ESRI ArcCatalog 9.3.1.4000</native>
+</idinfo>
+<dataqual>
+    <attracc>
+        <attraccr>Not Provided.</attraccr>
+    </attracc>
+    <logic>Not Provided.</logic>
+    <complete>Complete.</complete>
+    <posacc>
+        <horizpa>
+            <horizpar>Not Provided.</horizpar>
+        </horizpa>
+    </posacc>
+    <lineage>
+    <procstep>
+        <procdesc>Shapefile depecting the New Mexico Soil and Water Conservation Water Districts was created.</procdesc>
+        <procdate>Unknown</procdate>
+        <proccont>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>Spatial Applications and Research Center</cntorg>
+                    <cntper>Quinn Korbulic</cntper>
+                </cntorgp>
+                <cntaddr>
+                    <addrtype>mailing address</addrtype>
+                    <address>P.O Box 30001 Attn: Geograpy Dept.</address>
+                    <city>Las Cruces</city>
+                    <state>New Mexico</state>
+                    <postal>88003-8001</postal>
+                    <country>USA</country>
+                </cntaddr>
+                <cntvoice>575-646-5755</cntvoice>
+                <cntemail>korbulic@ad.nmsu.edu</cntemail>
+            </cntinfo>
+            </proccont>
+</procstep>
+</lineage>
+</dataqual>
+<spdoinfo>
+<direct>Vector</direct>
+<ptvctinf>
+<sdtsterm>
+<sdtstype>G-polygon</sdtstype>
+<ptvctcnt>47</ptvctcnt>
+</sdtsterm>
+</ptvctinf>
+</spdoinfo>
+<spref>
+<horizsys>
+<planar>
+<gridsys>
+<gridsysn>Universal Transverse Mercator</gridsysn>
+<utm>
+<utmzone>13</utmzone>
+<transmer>
+<sfctrmer>0.999600</sfctrmer>
+<longcm>-105.000000</longcm>
+<latprjo>0.000000</latprjo>
+<feast>500000.000000</feast>
+<fnorth>0.000000</fnorth>
+</transmer>
+</utm>
+</gridsys>
+<planci>
+<plance>coordinate pair</plance>
+<coordrep>
+<absres>0.000001</absres>
+<ordres>0.000001</ordres>
+</coordrep>
+<plandu>meters</plandu>
+</planci>
+</planar>
+<geodetic>
+<horizdn>North American Datum of 1983</horizdn>
+<ellips>Geodetic Reference System 80</ellips>
+<semiaxis>6378137.000000</semiaxis>
+<denflat>298.257222</denflat>
+</geodetic>
+</horizsys>
+</spref>
+<eainfo>
+<detailed>
+<enttyp>
+<enttypl>nmswcd</enttypl>
+    <enttypd>Shapefile for NM Soil and Water Conservation Districts</enttypd>
+    <enttypds>NMSWCD</enttypds>
+</enttyp>
+<attr>
+<attrlabl>FID</attrlabl>
+<attrdef>Internal feature number.</attrdef>
+<attrdefs>ESRI</attrdefs>
+<attrdomv>
+<udom>Sequential unique whole numbers that are automatically generated.</udom>
+</attrdomv>
+</attr>
+<attr>
+<attrlabl>Shape</attrlabl>
+<attrdef>Feature geometry.</attrdef>
+<attrdefs>ESRI</attrdefs>
+<attrdomv>
+<udom>Coordinates defining the features.</udom>
+</attrdomv>
+</attr>
+<attr>
+<attrlabl>Name</attrlabl>
+    <attrdef>District Name</attrdef>
+    <attrdefs>NMSWCD</attrdefs>
+    <attrdomv>
+        <udom>District Name</udom>
+    </attrdomv>
+</attr>
+<attr>
+<attrlabl>SQMI</attrlabl>
+    <attrdef>Square Miles</attrdef>
+    <attrdefs>ESRI</attrdefs>
+    <attrdomv>
+        <udom>Positive real numbers that are automatically generated.</udom>
+    </attrdomv>
+</attr>
+<attr>
+<attrlabl>Abbr</attrlabl>
+    <attrdef>District Name Abbreviation</attrdef>
+    <attrdefs>NMSWCD</attrdefs>
+    <attrdomv>
+        <udom>Name abbreviation</udom>
+    </attrdomv>
+</attr>
+<attr>
+<attrlabl>Region</attrlabl>
+    <attrdef>New Mexico Association of Conservation Districts (NMACD) regions.</attrdef>
+    <attrdefs>NMSWCD</attrdefs>
+    <attrdomv>
+        <edom>
+            <edomv>1</edomv>
+            <edomvd>Ciudad, Coronado, Cuba, Lava, McKinley, San Juan, Valencia</edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+    <attrdomv>
+        <edom>
+            <edomv>2</edomv>
+            <edomvd>Ciudad, Coronado, Cuba, Lava, McKinley, San Juan, Valencia</edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+    <attrdomv>
+        <edom>
+            <edomv>3</edomv>
+            <edomvd>Caballo, Deming, Grant, Hidalgo, La Union, Quemado, Salado, San Francisco, Sierra, Socorro</edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+    <attrdomv>
+        <edom>
+            <edomv>4</edomv>
+            <edomvd>Colfax, Mesa, Mora-Wagon Mound, Northeastern, Tierra y Montes, Ute Creek, Western Mora
+            </edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+    <attrdomv>
+        <edom>
+            <edomv>5</edomv>
+            <edomvd>Border, Canadian River, Central Curry, DeBaca, Guadalupe, Roosevelt, Southwest Quay
+            </edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+    <attrdomv>
+        <edom>
+            <edomv>6</edomv>
+            <edomvd>Carlsbad, Carrizozo, Central Valley, Chaves, Hagerman-Dexter, Lea, Otero, Peñasco, Upper Hondo
+            </edomvd>
+            <edomvds>NMSWCD</edomvds>
+        </edom>
+    </attrdomv>
+</attr>
+<attr>
+<attrlabl>Shape_Leng</attrlabl>
+    <attrdef>Area of feature in internal units.</attrdef>
+    <attrdefs>ESRI</attrdefs>
+    <attrdomv>
+        <udom>Positive real numbers that are automatically generated.</udom>
+    </attrdomv>
+</attr>
+<attr>
+<attrlabl>Shape_Area</attrlabl>
+<attrdef>Area of feature in internal units squared.</attrdef>
+<attrdefs>ESRI</attrdefs>
+<attrdomv>
+<udom>Positive real numbers that are automatically generated.</udom>
+</attrdomv>
+</attr>
+<attr>
+<attrlabl>calc_acres</attrlabl>
+    <attrdef>Calculated acres</attrdef>
+    <attrdefs>ESRI</attrdefs>
+    <attrdomv>
+        <udom>Positive real numbers that are automatically generated.</udom>
+    </attrdomv>
+</attr>
+</detailed>
+</eainfo>
+    <distinfo>
+        <distrib>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>Earth Data Analysis Center</cntorg>
+                </cntorgp>
+                <cntpos>Clearinghouse Manager</cntpos>
+                <cntaddr>
+                    <addrtype>mailing and physical address</addrtype>
+                    <address>MSC01 1110, Bandelier West, Room 118</address>
+                    <address>1 University of New Mexico</address>
+                    <city>Albuquerque</city>
+                    <state>NM</state>
+                    <postal>87131-0001</postal>
+                    <country>USA</country>
+                </cntaddr>
+                <cntvoice>505-277-3622 ext. 230</cntvoice>
+                <cntfax>505-277-3614</cntfax>
+                <cntemail>clearinghouse@edac.unm.edu</cntemail>
+                <hours>8:00 - 4:30 M-F MT</hours>
+            </cntinfo>
+        </distrib>
+        <resdesc>Downloadable Data</resdesc>
+        <distliab>RGIS/EDAC provides these data "as is" and makes no guarantee or warranty
+            concerning the accuracy of information contained in the data. RGIS further makes no
+            warranties, either expressed or implied as to any other matter whatsoever, including,
+            without limitation, the condition of the product, or its fitness for any particular
+            purpose. The burden for determining fitness for use lies entirely with the user.
+            Although these data have been processed successfully on computers of EDAC and served by
+            RGIS, no warranty, expressed or implied, is made by RGIS or EDAC regarding the use of
+            these data on any other system, nor does the fact of distribution constitute or imply
+            any such warranty. In no event shall RGIS or EDAC have any liability whatsoever for
+            payment of any consequential, incidental, indirect, special, or tort damages of any
+            kind, including, but not limited to, any loss of profits arising out of use of or
+            reliance on the data or arising out of the delivery, installation, operation, or support
+            by RGIS.</distliab>
+        <stdorder>
+            <digform>
+                <digtinfo>
+                    <formname>ESRI Shapefile</formname>
+                    <formvern>ArcGIS 10</formvern>
+                    <transize>1.014</transize>
+                </digtinfo>
+                <digtopt>
+                    <offoptn>
+                        <offmedia>CD-ROM</offmedia>
+                        <recfmt>varies</recfmt>
+                    </offoptn>
+                </digtopt>
+            </digform>
+            <fees>None.</fees>
+            <ordering>For information on ordering images on CD-ROMs, DVD-ROMs, or external hard disk
+                drive(s), contact the Earth Data Analysis Center through clearinghouse@edac.unm.edu.
+                Charges and delivery schedule for custom orders will vary depending on the size of
+                the order</ordering>
+            <turnarnd>varies according to type of order</turnarnd>
+        </stdorder>
+        <custom>For information on custom orders, contact Earth Data Analysis Center through
+            clearinghouse@edac.unm.edu. Charges and delivery schedule for custom orders will vary
+            depending on the size of the order.</custom>
+        <techpreq>Adequate computer capability is the only technical prerequisite for viewing data
+            in digital form.</techpreq>
+        <availabl>
+            <timeinfo>
+                <sngdate>
+                    <caldate>Unknown</caldate>
+                </sngdate>
+            </timeinfo>
+        </availabl>
+    </distinfo>
+<metainfo>
+<metd>20120615</metd>
+        <metc>
+            <cntinfo>
+                <cntorgp>
+                    <cntorg>Earth Data Analysis Center</cntorg>
+                </cntorgp>
+                <cntpos>Clearinghouse Manager</cntpos>
+                <cntaddr>
+                    <addrtype>mailing and physical address</addrtype>
+                    <address>Earth Data Analysis Center</address>
+                    <address>MSC01 1110, Bandelier West, Room 118</address>
+                    <address>1 University of New Mexico</address>
+                    <city>Albuquerque</city>
+                    <state>NM</state>
+                    <postal>87131-0001</postal>
+                </cntaddr>
+                <cntvoice>505-277-3622 ext. 230</cntvoice>
+                <cntfax>505-277-3614</cntfax>
+                <cntemail>clearinghouse@edac.unm.edu</cntemail>
+                <hours>8:00 am - 4:30 pm M-F MT</hours>
+            </cntinfo>
+            </metc>
+<metstdn>FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+<metstdv>FGDC-STD-001-1998</metstdv>
+<mettc>local time</mettc>
+<metextns>
+<onlink>http://www.esri.com/metadata/esriprof80.html</onlink>
+<metprof>ESRI Metadata Profile</metprof>
+</metextns>
+</metainfo>
+</metadata>
