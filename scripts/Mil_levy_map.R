@@ -32,22 +32,24 @@ nm_co <- counties(state = "NM", cb = TRUE) %>%  # cb = TRUE for simplified geome
 
 #produce plot
 ggplot() +
-  geom_sf(data = swcd, aes(fill = has_rate), color = "navajowhite", size = 0.05) +
   
-  geom_sf(data = nm_co, fill = NA, color = "black", linetype = "dashed", size = 0.3, alpha=0.25) +
+  geom_sf(data = swcd, aes(fill = has_rate), color = "gray20", size = 0.05) +
+  geom_sf(data = nm_co, fill = NA, color = "red", linetype = "dotted", linewidth = 0.35) +
   
   geom_text_repel(
     data = label_points,
     aes(geometry = geometry, label = NAME),
     stat = "sf_coordinates",
     size = 3,
-    color = "red4",
-    min.segment.length = 0,
-    max.overlaps = Inf
+    color = "black",
+    fontface = "bold",
+    segment.color = NA,
+    max.overlaps = Inf,
+    force_pull = 5
   ) +
   
   scale_fill_manual(
-    values = c("FALSE" = "oldlace", "TRUE" = "brown2"),
+    values = c("FALSE" = "oldlace", "TRUE" = "aquamarine3"),
     guide = "none"  # Remove legend
   ) +
   theme_void() +
