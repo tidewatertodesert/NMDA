@@ -34,19 +34,16 @@ nm_co <- counties(state = "NM", cb = TRUE) %>%  # cb = TRUE for simplified geome
 ggplot() +
   
   geom_sf(data = swcd, aes(fill = has_rate), color = "gray20", size = 0.05) +
-  geom_sf(data = nm_co, fill = NA, color = "red", linetype = "dotted", linewidth = 0.35) +
+  #geom_sf(data = nm_co, fill = NA, color = "red", linetype = "dotted", linewidth = 0.35) +
   
-  geom_text_repel(
-    data = label_points,
-    aes(geometry = geometry, label = NAME),
+  geom_text_repel(data = label_points,aes(geometry = geometry, label = NAME),
     stat = "sf_coordinates",
     size = 3,
     color = "black",
     fontface = "bold",
     segment.color = NA,
     max.overlaps = Inf,
-    force_pull = 5
-  ) +
+    force_pull = 5) +
   
   scale_fill_manual(
     values = c("FALSE" = "oldlace", "TRUE" = "aquamarine3"),
@@ -54,9 +51,10 @@ ggplot() +
   ) +
   theme_void() +
   theme(
-    panel.background = element_rect(fill = "white", color = NA)
+    panel.background = element_rect(fill = "white", color = NA),
+    legend.position = "bottom"
   )
 
 
 #save plot
-ggsave("C:/Users/dburruss/Documents/GitHub/NMDA/figures/Mil_levy_map_2025.jpg", width = 8, height = 10, dpi = 300)
+ggsave("C:/Users/dburruss/Documents/GitHub/NMDA/figures/District_mil_levy_map/Mil_levy_map_2025.jpg", width = 8, height = 10, dpi = 300)
