@@ -1,0 +1,12 @@
+"0","library(knitr)"
+"2","
+Attaching package: ‘knitr’
+
+"
+"2","The following object is masked from ‘package:terra’:
+
+    spin
+
+"
+"0","knitr::opts_chunk$set(echo = FALSE)"
+"0","opts_knit$set(root.dir=""C:/Users/dburruss/Documents/GitHub/NMDA/"") # file paths are relative to the root of the project directory"

@@ -1,0 +1,7 @@
+"0","#set input dir, and change workding directory"
+"0","in_dir <- 'C:/Users/dburruss/Documents/Rworking/'"
+"0","setwd(in_dir)"
+"2","Warning: The working directory was changed to C:/Users/dburruss/Documents/Rworking inside a notebook chunk. The working directory will be reset when the chunk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks."
+"0","#create an output dir"
+"0","out_dir <- 'C:/Users/dburruss/Documents/Rworking/Out'"
+"0","suppressWarnings(dir.create(out_dir))"

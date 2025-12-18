@@ -1,0 +1,24 @@
+library(terra)
+library(tidyterra)
+
+setwd("C:/Users/dburruss/Documents/GitHub/NMDA/")
+
+#read in the Nox. Weed Shapefiles
+
+list <- c("NM_Noxious_Weeds_Known_Locations/Noxious_Weeds_Known_Locations.shp",
+          "Class_AB_obs/Class_AB_Observations.shp",
+          "NMDOT/Class_C_Woody/Class_C_Woody_Observations.shp",
+          "NMDOT/Class_C_herb/Class_C_Herbaceous_Observations.shp")
+
+src_names <- c("NM_nox_lcats", "class_ab","class_c_woody","class_c_herb")
+
+#loop through data to open and assign to src_names as dataframe names
+for (i in 1:length(list)){
+  shp_data <- vect(paste0("C:/Users/dburruss/Documents/GitHub/NMDA/data/shapefiles/NMDOT/",list[1]))
+  
+  #plot
+  plot(shp_data)
+  
+  # Dynamically assign to the variable name from src_names using assign()
+  assign(src_names[i], shp_data)
+}

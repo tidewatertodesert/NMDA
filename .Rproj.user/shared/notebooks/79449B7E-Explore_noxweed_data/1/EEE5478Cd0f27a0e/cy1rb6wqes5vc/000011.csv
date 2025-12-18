@@ -1,0 +1,29 @@
+"0","#read in the swcd data
+SWCD <- st_read(""data/shapefiles/nmswcd/nmswcd.shp"") %>%
+  st_make_valid() %>% #fix invalid geometries
+  mutate(NAME = ifelse(NAME==""Edgewood"", ""Tri-County"", NAME))
+"
+"1","Reading layer `"
+"1","nmswcd"
+"1","' from data source "
+"1","`"
+"1","C:\Users\dburruss\Documents\GitHub\NMDA\data\shapefiles\nmswcd\nmswcd.shp"
+"1","' "
+"1","using driver `"
+"1","ESRI Shapefile"
+"1","'"
+"1","
+"
+"1","Simple feature collection with 47 features and 7 fields"
+"1","
+"
+"1","Geometry type: MULTIPOLYGON
+"
+"1","Dimension:     XY
+"
+"1","Bounding box:  "
+"1","xmin: 114574.3 ymin: 3470970 xmax: 682824.8 ymax: 4100656"
+"1","
+"
+"1","Projected CRS: NAD83 / UTM zone 13N
+"

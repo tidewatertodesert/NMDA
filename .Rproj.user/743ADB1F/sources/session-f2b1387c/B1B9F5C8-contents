@@ -1,0 +1,44 @@
+#collate NW reporting
+#Dylan Burruss
+
+library(tidyverse)
+
+sub25 <- read_csv("C:/Users/dburruss/Documents/GitHub/NMDA/data/tables/NW_grants/export_fy2025.csv") %>%
+  as_tibble() %>%
+  select(date,
+         sub_id,
+         tot_rev_score,
+         avg_rev_score,
+         rev_stage,
+         name,
+         title,
+         acres_map,
+         acres_edrr,
+         acres_trt,
+         summary,
+         amount_req,
+         amount_match) %>%
+  mutate(avg_rev_score = as.numeric(avg_rev_score))
+
+sub26 <- read_csv("C:/Users/dburruss/Documents/GitHub/NMDA/data/tables/NW_grants/export_fy2026.csv") %>%
+  as_tibble() %>%
+  select(date,
+         sub_id,
+         tot_rev_score,
+         avg_rev_score,
+         rev_stage,
+         name,
+         title,
+         acres_map,
+         acres_edrr,
+         acres_trt,
+         summary,
+         amount_req,
+         amount_match,
+         amount_fed) %>%
+  mutate(avg_rev_score = as.numeric(avg_rev_score))
+
+sub_c <- bind_rows(sub25, sub26)
+
+#write out data
+write_csv(sub_c, "C:/Users/dburruss/Documents/GitHub/NMDA/data/tables/NW_grants/combined_grant_data_13OCT25.csv")

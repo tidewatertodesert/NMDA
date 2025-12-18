@@ -1,0 +1,6 @@
+"0","ggsave(""figures/Explore_NW_data/Observation_dens_x_SWCD.png"", width = 10, height = 6, dpi = 300)"
+"2","Warning in st_point_on_surface.sfc(sf::st_zm(x)) :"
+"2","
+ "
+"2"," st_point_on_surface may not give correct results for longitude/latitude data
+"

@@ -1,0 +1,26 @@
+{
+    "id": "E6D9570C",
+    "path": "~/GitHub/NMDA/scripts/dashboard/EDDMapS_api.R",
+    "project_path": "scripts/dashboard/EDDMapS_api.R",
+    "type": "r_source",
+    "hash": "859831360",
+    "contents": "",
+    "dirty": false,
+    "created": 1744745018983.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "286,50",
+        "scrollLine": "248"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1765543575,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1765543575723,
+    "read_only": false,
+    "read_only_alternatives": []
+}

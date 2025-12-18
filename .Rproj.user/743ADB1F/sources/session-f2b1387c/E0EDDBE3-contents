@@ -1,0 +1,28 @@
+library(sf)
+
+
+# 1. Read the CSV file
+# Replace the path if necessary
+coords <- read.csv("C:/Users/dburruss/Downloads/meet_locates.csv", stringsAsFactors = FALSE)
+
+# 2. Convert to an sf object
+# Note: shapefiles typically use EPSG:4326 (lat/lon, WGS84)
+towns_sf <- st_as_sf(
+  coords,
+  coords = c("Longitude", "Latitude"),
+  crs = 4326,   # WGS84 coordinate reference system
+  remove = FALSE
+)
+
+# 3. Inspect the data
+print(towns_sf)
+
+plot(towns_sf)
+
+# 4. Write to a shapefile (will create .shp, .shx, .dbf, .prj files)
+st_write(
+  towns_sf,
+  "C:/Users/dburruss/Documents/GIS/Boundaries/SWCD_cities/SWCD_locat.shp",
+  driver = "ESRI Shapefile",
+  delete_layer = TRUE
+)
