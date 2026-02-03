@@ -5,10 +5,13 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 
+#data downloaded from https://gimms.gsfc.nasa.gov/MODIS/
+
 #--------------------------------------------------------------------
 # Paths
+#UPDATE FOLDER/FILE HERE
 #--------------------------------------------------------------------
-input_folder <- "C:/Users/dburruss/Documents/GIS/Drought_Monitor/GIMMS_data/10.2025"
+input_folder <- "C:/Users/dburruss/Documents/GIS/Drought_Monitor/GIMMS_data/2026.01"
 output_folder <- file.path(input_folder, "plots")
 
 if (!dir.exists(output_folder)) dir.create(output_folder, recursive = TRUE)

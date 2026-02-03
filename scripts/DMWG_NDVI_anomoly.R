@@ -5,7 +5,10 @@ library(exactextractr)
 library(dplyr)
 library(ggplot2)
 
-ndvi_anom <- rast("C:/Users/dburruss/Documents/GIS/Drought_Monitor/GIMMS_data/10.2025/GMOD09Q1.A2025281.08d.latlon.global.061.NDVI_anom_S2001-2024.tif")  # specify full filename
+#data downloaded from https://gimms.gsfc.nasa.gov/MODIS/
+
+#UPDATE FOLDER/FILE HERE
+ndvi_anom <- rast("C:/Users/dburruss/Documents/GIS/Drought_Monitor/GIMMS_data/2026.01/GMOD09Q1.A2025361.08d.latlon.global.061.NDVI_anom_S2001-2024.tif")  # specify full filename
 
 #Check info
 ndvi_anom
