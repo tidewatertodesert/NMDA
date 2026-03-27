@@ -1,0 +1,26 @@
+{
+    "id": "C324DACD",
+    "path": "~/GitHub/NMDA/scripts/dashboard/Preprocessing_data.R",
+    "project_path": "scripts/dashboard/Preprocessing_data.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1771599619929.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "110,0",
+        "scrollLine": "64"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1772207089,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1772207089,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -34,9 +34,9 @@ message("Total records: ",nrow(points_comb),". Unique species: ", length(unique(
 
 ####bring in state county and swcd data to add column to each shapefile
 #read in shapefile of the SWCDs
-SWCD <- st_read("data/shapefiles/nmswcd/nmswcd.shp") %>%
+SWCD <- st_read("scripts/dashboard/data/shapefiles/nmswcd/nmswcd.shp") %>%
   st_make_valid(SWCD) %>% # fix invalid geometries
-  mutate(NAME = ifelse(NAME=="Edgewood", "Tri-County", NAME)) %>%
+  mutate(NAME = ifelse(NAME=="Edgewood", "Central Tri-County", NAME)) %>%
   st_transform(crs=st_crs(points)) %>%
   select(NAME, Abbr) %>%
   rename(SWCD_name = NAME,
@@ -92,12 +92,12 @@ polygon_int <- polygons %>%
   st_intersection(nm_COUNTY)
 
 #write out the data
-st_write(points_join, "C:/Users/dburruss/Documents/GIS/EDDMapS/Processed_data/points_clean.shp",
+st_write(points_join, "C:/Users/dburruss/Documents/GIS/EDDMapS/Processed_data/Observations/points_clean.shp",
          append=FALSE, delete_layer=TRUE)
 
 
 #write out the data
-st_write(polygon_int, "C:/Users/dburruss/Documents/GIS/EDDMapS/Processed_data/polygon_clean.shp",
+st_write(polygon_int, "C:/Users/dburruss/Documents/GIS/EDDMapS/Processed_data/Observations/polygon_clean.shp",
          append=FALSE, delete_layer=TRUE)
 
 #write out the swcd data

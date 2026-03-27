@@ -11,7 +11,7 @@ library(viridis)
 # download all of the EDDMapS data for listed species
 
 #grab a list of NM noxious weeds
-list <- read_xlsx("data/tables/Nox_weed_list.xlsx") %>%
+list <- read_xlsx("scripts/dashboard/data/tables/Nox_weed_list.xlsx") %>% #"data/tables/Nox_weed_list.xlsx"
   as_tibble() %>%
   mutate(sp_name = gsub(" spp\\.", "",paste0(Genus," ",species))) 
 
