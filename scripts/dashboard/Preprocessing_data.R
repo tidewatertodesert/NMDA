@@ -34,7 +34,7 @@ message("Total records: ",nrow(points_comb),". Unique species: ", length(unique(
 
 ####bring in state county and swcd data to add column to each shapefile
 #read in shapefile of the SWCDs
-SWCD <- st_read("scripts/dashboard/data/shapefiles/nmswcd/nmswcd.shp") %>%
+SWCD <- st_read("C:/Users/dburruss/Documents/GIS/Boundaries/nmswcd/nmswcd.shp") %>%
   st_make_valid(SWCD) %>% # fix invalid geometries
   mutate(NAME = ifelse(NAME=="Edgewood", "Central Tri-County", NAME)) %>%
   st_transform(crs=st_crs(points)) %>%
