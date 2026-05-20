@@ -3,45 +3,112 @@ library(readxl)
 library(tidyverse)
 library(readr)
 library(scales)
+library(RDCOMClient)
+library(qpdf)
 
-# This script searches the word document for these elements and replaces them with information from the grant data
-# The information is replaced excacly how it appears in the excel document
-# {{GRANTEE}}
-# {{PROJECT_TITLE}}
-# {{AMOUNT}}
+#USE THIS TO INSTALL RDCOMClient
+# install.packages("remotes")
+# remotes::install_github("omegahat/RDCOMClient")
 
-{{AGREEMENTSTART}} <- "July 15, 2025"
-{{AGREEMENTEND}} <- "October 31, 2026"
+# UPDATE TEMPLATE AND OUTPUT DIRECTORY LOCATION HERE
+template <- "R:/FY27_MOA_Working/NWM/APR_MOA_Template_20260512_NWP.docx"     #MOA template 
+grant_table <- "R:/FY27_MOA_Working/NWM/Grant_data_2026.xlsx"    #location of grant data table
+output_dir <- "R:/FY27_MOA_Working/NWM/Draft_MOA/"    #where MOA's will be written to
+budget_dir <- "R:/FY27_MOA_Working/NWM/BudgetPDFs"    #location of Budgets
+exhibitb <- "R:/FY27_MOA_Working/NWM/Exhibit_B_reporting_requirements.pdf"    #Exhibit B with file path
 
-
-template <- "C:/Users/dburruss/Documents/GitHub/NMDA/scripts/Prgm_mgmt/Auto_MOA/Templates/MOA_Template.docx"
-output_dir <- "C:/Users/dburruss/Documents/GitHub/NMDA/scripts/Prgm_mgmt/Auto_MOA/Draft_MOAs/"
-
-# Read in the grantee data to write to the MOA template (Grant_data Excel file)
+# Read in grant data
 grant_dat <- readxl::read_xlsx(
-  "C:/Users/dburruss/Documents/GitHub/NMDA/scripts/Prgm_mgmt/Auto_MOA/Templates/Grant_data.xlsx"
+  grant_table,
+  col_types = "text"
 ) %>%
   as_tibble()
 
-dir.create(output_dir, showWarnings = FALSE) #creates a folder specified by output_dir only if it doesn't exist
+dir.create(output_dir, showWarnings = FALSE)
 
-# Loop through the find and replace arguments for each Grantee
+# Open Word once
+word_app <- COMCreate("Word.Application")
+word_app[["Visible"]] <- FALSE
+
+# Loop through records
 for (i in seq_len(nrow(grant_dat))) {
   
   doc <- read_docx(template)
   
   doc <- doc %>%
-    body_replace_all_text("{{GRANTEE}}", grant_dat$GRANTEE[i], fixed = TRUE) %>%
-    body_replace_all_text("{{PROJECT_TITLE}}", grant_dat$TITLE[i], fixed = TRUE) %>%
-    body_replace_all_text("{{AMOUNT}}", scales::dollar(grant_dat$AMOUNT[i]), fixed = TRUE)
+    body_replace_all_text("{{CONTRACTOR}}", grant_dat$CONTRACTOR[i], fixed = TRUE) %>%
+    body_replace_all_text("{{CONTRNAME}}", grant_dat$CONTRNAME[i], fixed = TRUE) %>%
+    body_replace_all_text("{{CONTRADDRESS}}", grant_dat$CONTRADDRESS[i], fixed = TRUE) %>%
+    body_replace_all_text("{{CONTRTEL}}", grant_dat$CONTRTEL[i], fixed = TRUE) %>%
+    body_replace_all_text("{{CONTREMAIL}}", grant_dat$CONTREMAIL[i], fixed = TRUE) %>%
+    body_replace_all_text("{{PROJTITLE}}", grant_dat$PROJTITLE[i], fixed = TRUE) %>%
+    body_replace_all_text(
+      "{{AMOUNT}}",
+      scales::dollar(as.numeric(grant_dat$AMOUNT[i]), accuracy = 0.01),
+      fixed = TRUE
+    )
   
-  # Write out new MOA, replacing blanks spaces in file name
-  out_file <- paste0(
-    "MOA_",
+  # Safe filename
+  base_name <- paste0(
     grant_dat$ID[i], "_",
-    gsub("[^A-Za-z0-9]+", "_", grant_dat$GRANTEE[i]),
-    ".docx"
+    "MOA_",
+    gsub("[^A-Za-z0-9]+", "_", grant_dat$CONTRACTOR[i])
   )
   
-  print(doc, target = file.path(output_dir, out_file))
+  docx_file <- file.path(paste0(output_dir,"temp"), paste0(base_name, ".docx"))
+  pdf_file  <- file.path(paste0(output_dir,"temp"), paste0(base_name, ".pdf"))
+  
+  # Save DOCX
+  print(doc, target = docx_file)
+  
+  # Open DOCX in Word
+  word_doc <- word_app$Documents()$Open(normalizePath(docx_file))
+  
+  # Export as PDF
+  word_doc$SaveAs(normalizePath(pdf_file), FileFormat = 17)
+  
+  # Close document
+  word_doc$Close(FALSE)
 }
+
+# Quit Word
+word_app$Quit()
+
+# APPEND BUDGET PDFS and 
+
+drafts <- list.files(paste0(output_dir,"temp"), pattern = "\\.pdf$")
+budgets <- list.files(budget_dir, pattern = "\\.pdf$")
+
+# Loop through draft PDFs
+for (draft_file in drafts) {
+  
+  # Extract 4-digit ID from draft filename
+  id <- str_extract(draft_file, "^\\d{4}")
+
+  # Find matching budget file
+  budget_file <- budgets[str_detect(budgets, paste0("^", id))]
+
+  # Skip if no match found
+  if (length(budget_file) == 0) {
+    message("No budget match for: ", draft_file)
+    next
+  }
+
+  # Full paths
+  draft_path  <- file.path(paste0(output_dir,"temp"), draft_file)
+  budget_path <- file.path(budget_dir, budget_file[1])
+
+  # Final output path
+  output_path <- file.path(output_dir, draft_file)
+  
+  # Combine PDFs directly into output directory
+  pdf_combine(
+    input = c(draft_path, budget_path, exhibitb),
+    output = output_path
+  )
+  
+  message("Created: ", output_path)
+}
+
+  
+  
