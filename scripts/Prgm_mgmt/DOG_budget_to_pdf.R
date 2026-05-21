@@ -18,7 +18,7 @@ grant_dat <- readxl::read_xlsx(
 
 dir.create(output_dir, showWarnings = FALSE)
 
-
+# Create list of budgets in program folder and filter out unrevised budgets
 
 budgetdir <- "//nmda2/DATA/APR/APR Programs/LOE/FY27 DO Grant/FY27 Applications/" 
 files <- list.files(budgetdir, recursive = TRUE, pattern = "\\.xlsx$")
