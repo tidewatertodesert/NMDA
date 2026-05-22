@@ -15,7 +15,9 @@ template <- "R:/FY27_MOA_Working/NWM/APR_MOA_Template_20260512_NWP.docx"     #MO
 grant_table <- "R:/FY27_MOA_Working/NWM/Grant_data_2026.xlsx"    #location of grant data table
 output_dir <- "R:/FY27_MOA_Working/NWM/Draft_MOA/"    #where MOA's will be written to
 budget_dir <- "R:/FY27_MOA_Working/NWM/BudgetPDFs"    #location of Budgets
+exhibita_path <- "R:/FY27_MOA_Working/NWM/Applications/"
 exhibitb <- "R:/FY27_MOA_Working/NWM/Exhibit_B_reporting_requirements.pdf"    #Exhibit B with file path
+
 
 # Read in grant data
 grant_dat <- readxl::read_xlsx(
@@ -75,40 +77,43 @@ for (i in seq_len(nrow(grant_dat))) {
 word_app$Quit()
 
 # APPEND BUDGET PDFS and 
-
 drafts <- list.files(paste0(output_dir,"temp"), pattern = "\\.pdf$")
 budgets <- list.files(budget_dir, pattern = "\\.pdf$")
+exhibita_files <- list.files(exhibita_path, pattern = "\\.pdf$")
 
 # Loop through draft PDFs
 for (draft_file in drafts) {
   
   # Extract 4-digit ID from draft filename
   id <- str_extract(draft_file, "^\\d{4}")
-
+  
   # Find matching budget file
   budget_file <- budgets[str_detect(budgets, paste0("^", id))]
-
-  # Skip if no match found
   if (length(budget_file) == 0) {
     message("No budget match for: ", draft_file)
     next
   }
-
+  
+  # Find matching Exhibit A (e.g. 0002.pdf)
+  exhibita_file <- exhibita_files[str_detect(exhibita_files, paste0("^", id, "\\.pdf$"))]
+  if (length(exhibita_file) == 0) {
+    message("No Exhibit A match for: ", draft_file)
+    next
+  }
+  
   # Full paths
-  draft_path  <- file.path(paste0(output_dir,"temp"), draft_file)
-  budget_path <- file.path(budget_dir, budget_file[1])
-
+  draft_path    <- file.path(paste0(output_dir, "temp"), draft_file)
+  budget_path   <- file.path(budget_dir, budget_file[1])
+  exhibita_full <- file.path(exhibita_path, exhibita_file[1])
+  
   # Final output path
   output_path <- file.path(output_dir, draft_file)
   
-  # Combine PDFs directly into output directory
+  # Combine PDFs: Draft > Budget > Exhibit A > Exhibit B
   pdf_combine(
-    input = c(draft_path, budget_path, exhibitb),
+    input = c(draft_path, budget_path, exhibita_full, exhibitb),
     output = output_path
   )
   
   message("Created: ", output_path)
 }
-
-  
-  
