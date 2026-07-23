@@ -8,6 +8,7 @@ library(janitor)
 library(lubridate)
 library(viridis)
 
+#Run this before the Preprocessing_data.R script
 # download all of the EDDMapS data for listed species
 
 #grab a list of NM noxious weeds
@@ -227,7 +228,7 @@ points_shp <- nox_emd %>%
   st_as_sf()
 
 #write out csv
-#write.csv(nox_emd, paste0("EDDMapS/EDDMapS_raw/nox_emd_raw_pts.csv")) 
+write.csv(nox_emd, paste0("C:/Users/dburruss/Documents/GitHub/NMDA/scripts/dashboard/data/tables/Nox_EMD_raw_pts_",Sys.Date(),".csv")) 
   
 #save shapefile - fields will be abbreviated
 st_write(points_shp, 
@@ -285,4 +286,5 @@ st_write(poly_shp,
 #   coord_sf(xlim = c(-109.05, -103), ylim = c(31.4, 37.0))  # Set the coordinate limits for New Mexico
 # 
 # ggsave("C:/Users/dburruss/Documents/GIS/EDDMapS/Noxious_weeds_map.jpg")
+
 
